@@ -195,3 +195,4 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - 2026-10-19 07:38 Searcher 3: Collatz from 2^71 (2^26 sieve, 128-bit, ~6e8 n/s/core). Honest odds: none; included for fame. Decision: sum of three cubes moved later (needs cube roots mod large d; region a home PC can add is tiny).
 - 2026-10-19 07:45-10:55 Session interrupted again (usage limit); resumed 10:56 via the hourly scheduled task. ~4h40m left.
 - 2026-10-19 10:57 Searcher 4: perfect cuboid from odd edge 2.5e13 (sieve factoring, legs from a^2=uv, Euler-brick divisibility pre-filter, exact mini-gmp check). Brick counts match unfiltered brute force. Vendored mini-gmp (LGPL3/GPL2, CREDITS.md); install uses real GMP if present.
+- 2026-10-19 11:00 Searcher 5: magic square of squares (centre e^2, Gaussian-integer pair lists, from e=1 since no precise published bound found; ~4M e/s/core).

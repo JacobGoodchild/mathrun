@@ -1,0 +1,9 @@
+name = "Magic square of squares (3×3)"
+category = "Number theory"
+mode = "range"
+weight = 2
+unit_seconds = 150
+binaries = ["magic"]
+summary = "Can nine different perfect squares fill a 3×3 magic square? (The 'Parker square' problem.)"
+record = "none known; searches suggest entries would exceed ~10^14 (Boyer's survey)"
+case_name = "centres"
