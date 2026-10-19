@@ -125,7 +125,10 @@ def cmd_start(args):
         print("Not built yet: %s\nRun ./mathrun install first." % ", ".join(missing))
         return 1
     paths.ensure("logs")
-    out = open(os.path.join(paths.logs_dir(), "runner.stdout"), "a")
+    so = os.path.join(paths.logs_dir(), "runner.stdout")
+    if os.path.exists(so) and os.path.getsize(so) > 5_000_000:
+        os.replace(so, so + ".old")   # keep one old copy, never grow forever
+    out = open(so, "a")
     proc = subprocess.Popen([sys.executable, "-m", "mathrun_core.runner"], cwd=paths.REPO,
                             stdout=out, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
                             start_new_session=True)
@@ -223,6 +226,7 @@ def cmd_clear_bug(args):
     st["disabled_reason"] = None
     st["failures_in_a_row"] = 0
     st["backoff_until"] = 0
+    st["unit_failures"] = {}
     atomic.atomic_write_json(paths.state_path(args[0]), st)
     print("Cleared. %s will run again on next start." % args[0])
     return 0

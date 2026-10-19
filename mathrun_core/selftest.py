@@ -11,6 +11,7 @@
 import concurrent.futures as cf
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -48,7 +49,7 @@ def run_unit_tests(verbose=False):
 
 
 def run_verifier(p, cand):
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, dir=paths.ensure("work", "selftest")) as f:
         json.dump(cand, f)
         path = f.name
     try:
@@ -70,14 +71,17 @@ def mini_run(p):
         return False, "not built (./mathrun install)"
     notes = []
     for m in minis:
-        work = tempfile.mkdtemp(prefix="mathrun-mini-")
+        work = tempfile.mkdtemp(prefix="mini-", dir=paths.ensure("work", "selftest"))
         argv = plugin.argv(m["unit"], {"dir": p.folder, "bin": p.path("bin"), "work": work,
                                        "seconds": m.get("seconds", 5)})
         try:
+            from .runner import lowprio
             r = subprocess.run(argv, capture_output=True, text=True, timeout=MINI_TIMEOUT_S,
-                               cwd=work)
+                               cwd=work, preexec_fn=lowprio(19))
         except subprocess.TimeoutExpired:
             return False, "mini-run %s took over %ds" % (m.get("name", "?"), MINI_TIMEOUT_S)
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
         if r.returncode != 0:
             return False, "searcher exited %d: %s" % (r.returncode, r.stderr[-500:])
         proto = problems.parse_protocol(r.stdout)

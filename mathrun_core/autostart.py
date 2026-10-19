@@ -33,7 +33,7 @@ Nice=19
 IOSchedulingClass=idle
 Restart=on-failure
 RestartSec=60
-KillMode=control-group
+KillMode=mixed
 TimeoutStopSec=30
 
 [Install]

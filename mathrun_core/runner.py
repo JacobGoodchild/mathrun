@@ -55,13 +55,29 @@ def setup_logging(to_stderr=False):
         log.addHandler(s)
 
 
-def lowprio(nice):
+def lowprio(nice, max_file_bytes=None):
     def fn():
         try:
             os.nice(nice)
         except OSError:
             pass
+        if max_file_bytes:
+            try:  # a runaway searcher cannot fill the disk with output
+                import resource
+                resource.setrlimit(resource.RLIMIT_FSIZE, (max_file_bytes, max_file_bytes))
+            except (ImportError, ValueError, OSError):
+                pass
     return fn
+
+
+def proc_cpu_seconds(pid):
+    """CPU time (user + system) a running process has used, from /proc."""
+    try:
+        with open("/proc/%d/stat" % pid) as f:
+            fields = f.read().rsplit(")", 1)[1].split()
+        return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+    except (OSError, ValueError, IndexError):
+        return 0.0
 
 
 def ionice_prefix():
@@ -268,7 +284,7 @@ class Runner:
                 j.active_s += now - j.last_tick
             j.last_tick = now
             want_paused = k >= allowed
-            if want_paused != j.paused:
+            if want_paused != j.paused and j.proc.returncode is None and j.proc.pid > 1:
                 try:
                     os.killpg(j.proc.pid, signal.SIGSTOP if want_paused else signal.SIGCONT)
                     j.paused = want_paused
@@ -340,7 +356,8 @@ class Runner:
             with open(out_path, "w") as fo, open(err_path, "w") as fe:
                 proc = subprocess.Popen(ionice_prefix() + list(argv), stdout=fo, stderr=fe,
                                         stdin=subprocess.DEVNULL, cwd=wd,
-                                        preexec_fn=lowprio(self.nice), start_new_session=True)
+                                        preexec_fn=lowprio(self.nice, 256 * 1024 * 1024),
+                                        start_new_session=True)
         except OSError as e:
             self._fail(p, "could not start searcher: %s" % e)
             return False
@@ -349,6 +366,9 @@ class Runner:
 
     @staticmethod
     def _kill(proc):
+        # never signal a process we have already reaped, or a placeholder without a real pid
+        if proc.returncode is not None or not isinstance(proc.pid, int) or proc.pid <= 1:
+            return
         try:
             os.killpg(proc.pid, signal.SIGCONT)
             os.killpg(proc.pid, signal.SIGKILL)
@@ -377,11 +397,17 @@ class Runner:
         for j in self.jobs:
             done, code, cpu = self._reap(j.proc)
             if not done:
+                # Budgets are CPU time, so judge "too long" by CPU time used (a busy computer
+                # slows a nice-19 searcher down without that being its fault). A very large
+                # wall-clock cap still catches a searcher that hangs without using CPU.
                 limit = max(j.problem.unit_seconds * 8, 1800)
-                if j.active_s > limit:
+                if proc_cpu_seconds(j.proc.pid) > limit or j.active_s > 48 * limit:
                     log.warning("%s unit %d ran too long; killing", j.problem.slug, j.index)
                     self._kill(j.proc)
-                    self._reap(j.proc, block=True)
+                    _, _, cpu = self._reap(j.proc, block=True)
+                    self.session_cpu[j.problem.slug] += cpu
+                    self.states[j.problem.slug]["cpu_seconds"] += cpu
+                    self._rescue_candidates(j)
                     self._fail(j.problem, "unit %d timed out" % j.index, j.index)
                     self._cleanup_files(j, keep=True)
                     continue
@@ -458,6 +484,11 @@ class Runner:
         p, st = j.problem, self.states[j.problem.slug]
         self.session_cpu[p.slug] += cpu
         st["cpu_seconds"] += cpu
+        if code in (-signal.SIGTERM, -signal.SIGINT, -signal.SIGHUP) or (code != 0 and self.stop_flag):
+            # stopped from outside (logout, shutdown, ./mathrun stop): not the searcher's fault
+            self._rescue_candidates(j)
+            self._cleanup_files(j, keep=False)
+            return
         if code != 0:
             self._rescue_candidates(j)
             self._fail(p, "searcher exited with code %s on unit %d" % (code, j.index), j.index)
@@ -517,6 +548,8 @@ class Runner:
 
     # ---------- candidate pipeline ----------
     def _new_candidate(self, p, j, c):
+        if not isinstance(c, dict):
+            c = {"kind": "solution", "summary": "malformed CAND line", "data": {"raw": c}}
         folder = paths.ensure("candidates", p.slug)
         cid = time.strftime("%Y%m%d-%H%M%S") + "-u%d-%d" % (j.index, len(os.listdir(folder)))
         rec = {"id": cid, "problem": p.slug, "problem_name": p.name, "unit": j.unit,
@@ -534,11 +567,21 @@ class Runner:
 
     def _start_verify(self, p, cand_path):
         out_path = cand_path + ".verify.txt"
-        with open(out_path, "w") as fo:
-            proc = subprocess.Popen([sys.executable, "-I", p.path("verify.py"), cand_path],
-                                    stdout=fo, stderr=subprocess.STDOUT,
-                                    stdin=subprocess.DEVNULL, cwd=p.folder,
-                                    preexec_fn=lowprio(self.nice), start_new_session=True)
+        try:
+            with open(out_path, "w") as fo:
+                proc = subprocess.Popen([sys.executable, "-I", p.path("verify.py"), cand_path],
+                                        stdout=fo, stderr=subprocess.STDOUT,
+                                        stdin=subprocess.DEVNULL, cwd=p.folder,
+                                        preexec_fn=lowprio(self.nice), start_new_session=True)
+        except OSError as e:
+            log.error("%s: could not start verifier: %s", p.slug, e)
+            with open(out_path, "w") as fo:
+                fo.write("could not start verifier: %s\n" % e)
+
+            class Failed:
+                returncode = 2
+                pid = -1
+            proc = Failed()
         self.verifies.append(VerifyJob(p, cand_path, proc, out_path))
 
     def _collect_verifies(self):

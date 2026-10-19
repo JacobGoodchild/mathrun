@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
         int p, m = 0;
         int *tmp = malloc(sizeof(int) * N);
         if (!f) { fprintf(stderr, "bad start file\n"); return 2; }
-        while (fscanf(f, "%d", &p) == 1) { if (p < 0 || p >= N) { fprintf(stderr, "bad point\n"); return 2; } tmp[m++] = p; }
+        while (m < N && fscanf(f, "%d", &p) == 1) { if (p < 0 || p >= N) { fprintf(stderr, "bad point\n"); return 2; } tmp[m++] = p; }
         fclose(f);
         if (!is_cap(tmp, m)) { fprintf(stderr, "start set is not a cap\n"); return 3; }
         for (int i = 0; i < m; i++) add(tmp[i]);

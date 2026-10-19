@@ -4,11 +4,11 @@
 
 **Why it's famous.**
 - In 2016 Ellenberg and Gijswijt used the brand-new "polynomial method" of Croot, Lev and Pach to prove that caps are exponentially smaller than the whole space. Quanta called it a breakthrough.
-- In 2023 DeepMind's **FunSearch** (Nature) used a language model to find a cap of size **512 in dimension 8**, beating the 496 humans had found. That was the first time an AI system made a discovery on an open maths problem.
+- In 2023 DeepMind's **FunSearch** (Nature) used a language model to find a cap of size **512 in dimension 8**, beating the 496 humans had found. DeepMind described it as the first time a large language model made a discovery on an open maths problem.
 
 **Current status (checked 19 Oct 2026).**
 - The largest caps are known exactly up to dimension 6: 2, 4, 9, 20, 45 and 112.
-- Dimension 7: the best known is **236** (Edel), and the upper bound is 291.
+- Dimension 7: the best known is **236** (Edel), and the upper bound is 288 (Thackeray, arXiv:2206.09804).
 - Dimension 8: the best known is **512** (FunSearch, 2023).
 
 **What this searcher does.** It runs a plain local search, with no AI involved:
