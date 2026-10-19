@@ -58,6 +58,21 @@ class TestMatMul(unittest.TestCase):
         self.assertLessEqual(d["rank"], 49)
         self.assertTrue(verify.is_matmul_scheme(4, 4, 4, d["terms"]))
 
+    def test_compose_and_rotate(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("mm_compose", os.path.join(HERE, "compose.py"))
+        compose = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(compose)
+        P = plugin()
+        stored = {(2, 2, 2): P.STRASSEN}
+        for fmt in ((2, 2, 4), (3, 2, 2), (2, 3, 2), (4, 4, 4), (3, 3, 7), (2, 5, 3), (5, 2, 4)):
+            t = compose.best_start(fmt, stored)
+            self.assertTrue(verify.is_matmul_scheme(*fmt, t), fmt)
+            self.assertLessEqual(len(t), fmt[0] * fmt[1] * fmt[2])
+        self.assertEqual(len(compose.best_start((4, 4, 4), stored)), 56)   # 8 Strassen blocks
+        rot = compose.rotate(compose.best_start((2, 2, 3), stored))
+        self.assertTrue(verify.is_matmul_scheme(2, 3, 2, rot))
+
     def test_lifting(self):
         import importlib.util
         spec = importlib.util.spec_from_file_location("mm_lift", os.path.join(HERE, "lift.py"))

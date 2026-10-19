@@ -74,13 +74,25 @@ def kron(s1, d1, s2, d2):
 
 
 def start_scheme(state, fmt):
+    """Continue the walk from our best scheme for this format, unless a bigger head start
+    can be built by gluing together (or rotating) our best schemes for smaller formats."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("mm_compose", os.path.join(os.path.dirname(__file__), "compose.py"))
+    compose = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compose)
     n, m, p = fmt[:3]
-    best = state.get("best", {}).get(key(n, m, p))
-    if best:
-        return best["terms"]
-    # Note: Strassen-squared (rank 49) for 4x4 looks like a head start, but it shares no
-    # factors, so the walk can't move away from it (tested: stuck at 49). Like Kauers &
-    # Moosbauer we start from the schoolbook method and let the walk continue across units.
+    stored = {(2, 2, 2): STRASSEN}
+    for k, v in state.get("best", {}).items():
+        dims = tuple(int(x) for x in k.split("x"))
+        stored[dims] = v["terms"]
+    own = state.get("best", {}).get(key(n, m, p))
+    built = compose.best_start((n, m, p), stored)
+    if own and len(own["terms"]) <= len(built):
+        return own["terms"]
+    if len(built) < n * m * p:
+        return built
+    # Note: for 4x4 a pure Strassen-squared start (49) gets stuck (it shares no factors),
+    # so plain schoolbook starts are used when nothing better can be built.
     return None
 
 
