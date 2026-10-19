@@ -186,3 +186,4 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - 2026-10-19 06:55 New deadline from user: work until 16:40 UK time = 15:40 UTC on 19 Oct 2026. Last 20 minutes (from 15:20 UTC) = wrap-up and summary. An hourly scheduled task re-wakes the session if the usage limit interrupts.
 - Decision: pushes go to both the dev branch `ccr-c3ca9c32-2ylwxr` and `main` (the brief explicitly asks for `main`), and only after tests pass.
 - 2026-10-19 07:06 Core + runner + candidate pipeline tested end to end with a toy problem (planted answer found, verified, alerted; lying searcher caught and paused; restart resumes). selftest passes.
+- 2026-10-19 07:20 Dashboard (docs/: index + detail page + compute ledger, light/dark, hand-written SVG charts, own markdown renderer, no external libs) done; screenshots checked.
