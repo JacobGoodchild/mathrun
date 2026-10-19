@@ -1,0 +1,13 @@
+# A fake problem used only by the tests. It has a "counterexample" planted at
+# a known place so the whole pipeline (search -> save -> verify -> alert) can
+# be proven end to end. It never runs during real searching.
+name = "Toy problem (planted answer)"
+category = "Test"
+toy = true
+mode = "range"
+weight = 1
+unit_seconds = 1
+binaries = ["toy"]
+summary = "Find n with (n * 2654435761) mod 2^32 == 0xDEADBEEF. One is planted."
+record = "test only"
+case_name = "numbers"

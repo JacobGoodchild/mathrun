@@ -182,3 +182,7 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 
 - 2026-10-18 20:20 Session start. Repo empty. Build machine: 4 cores, gcc 13.3, Python 3.13, no GMP headers.
 - 2026-10-18 20:20 Decision: brief saved verbatim (from section heading onward) as CLAUDE.md.
+- 2026-10-19 06:50 Build had stopped at ~21:00 (usage limit). Core modules written but untested, pushed as WIP to the dev branch only.
+- 2026-10-19 06:55 New deadline from user: work until 16:40 UK time = 15:40 UTC on 19 Oct 2026. Last 20 minutes (from 15:20 UTC) = wrap-up and summary. An hourly scheduled task re-wakes the session if the usage limit interrupts.
+- Decision: pushes go to both the dev branch `ccr-c3ca9c32-2ylwxr` and `main` (the brief explicitly asks for `main`), and only after tests pass.
+- 2026-10-19 07:06 Core + runner + candidate pipeline tested end to end with a toy problem (planted answer found, verified, alerted; lying searcher caught and paused; restart resumes). selftest passes.

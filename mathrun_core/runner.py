@@ -245,7 +245,11 @@ class Runner:
         now = time.monotonic()
         if now - self.last_guard >= GUARD_EVERY_S:
             self.last_guard = now
+            old = self.decision.get("reason")
             self.decision = self.guards.evaluate()
+            if self.decision.get("reason") != old:
+                log.info("guards: %s", self.decision.get("reason"))
+                self.last_status = -1e9  # show the change on the dashboard straight away
         self._apply_pause()
         self._collect()
         self._collect_verifies()
