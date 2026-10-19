@@ -1,0 +1,9 @@
+name = "Perfect cuboid"
+category = "Geometry and combinatorics"
+mode = "range"
+weight = 2
+unit_seconds = 150
+binaries = ["cuboid"]
+summary = "Is there a box whose edges, face diagonals and space diagonal are all whole numbers?"
+record = "odd edge > 2.5×10^13, smallest edge > 5×10^11 (exhaustive searches, Matson et al.)"
+case_name = "odd edges"
