@@ -208,3 +208,64 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - 2026-10-19 11:45 Matmul: GF(2) record candidates now get an automatic +-1 integer lift attempt (Hensel step mod 4 + exact check over Z); verifier independently re-checks any lift. Strassen and Strassen^2 lift; tests added.
 - 2026-10-19 11:49 Review pass 3 (fresh subagent: cap sets, runner, all safety rules): no critical bugs; fixed 13 findings. Biggest: publish rewritten to build one commit with a private index + commit-tree on top of the remote branch (tested: user's unpushed commit and dirty files untouched); unit time limit now CPU-time based; timed-out units' candidates rescued; 256 MB output cap per searcher; SIGTERM/logout is not a failure; KillMode=mixed; selftest temp files inside data/; published snapshot drops candidate data/paths; cap-set dim-7 upper bound corrected to 288; idle detection under systemd.
 - 2026-10-19 12:00 Matmul experiment: 4x4 from Strassen^2 (49) never moved in 3x170 s (no shared factors -> no flips); from schoolbook all walk-length settings reach 52 in 150 s. Decision: all formats start from schoolbook; walk continues across units.
+- 2026-10-19 12:01 Decision: no more searchers today (Euler sixth powers needs the Resta-Meyrignac method, which doesn't fit the time left; RH zeros risk false alarms from double precision). Final 10-minute full-runner check started.
+
+---
+
+# Summary — Monday 19 October 2026 (written 12:10 UTC, checked again before 15:40 UTC)
+
+## What you have
+A working platform (runner, guards, crash-safe checkpoints, candidate pipeline with independent verifiers, alerts, dashboard, optional publishing, autostart) and **8 searchers**. Everything passes `./mathrun selftest`, and the whole thing has been run end to end under the real runner.
+
+| Searcher | Where it starts | Speed (one core, build machine) | Honest odds |
+|---|---|---|---|
+| Fast matrix multiplication (23 formats, GF(2) flip graphs) | schoolbook method; keeps its best scheme per format | 1–2 M flips/s. In 80 s: 3×3×4 → 30 (record 29), 2×4×5 → 33 (32), 3×3×5 → 38 (36); 4×4 → 52 in 150 s (record 47) | Low but real. The best chance of a genuine record, especially 3×3×7 (49) and 3×6×6 (80), whose records are only constructions. Finds are auto-lifted to integers if possible. |
+| Brocard n!+1=m² | n = 10^15 (published bound) | 2.4 M n/s → about +7×10^12 a month (4 h/day, 7 cores) | No new solution expected; it really extends the verified bound |
+| Sum of three cubes (114, 390, 627, 633, 732, 921, 975) | just past Booker & Sutherland: d > 10^19/54, \|z\| ≤ 10^19 | 300 k d/s | A lottery ticket in exactly the right, unsearched place |
+| Perfect cuboid | odd edge 2.5×10^13 | about 7,500 odd edges/s (very uneven) | Very low; extends the published bound slowly |
+| Beal (US$1M) | all bases ≤ 2^21 (8× published), exponents 3–7 | about 1 M base pairs/s; whole job about 600 core-hours (~3 weeks) | Essentially zero; a documented extension |
+| Magic square of squares | e = 1 (no precise published bound found) | 2–4 M centres/s | Low |
+| Collatz | 2^71 | 6×10^8 n/s | Essentially zero (Barina's GPUs are far faster); included for fame |
+| Cap sets (dims 7 and 8) | its own best cap | reaches about 165 / 335 (records 236 / 512) | Practically none; low weight 0.5 |
+
+## Shortlist
+Scores and sources are in `docs/problem-shortlist.md`. **Dropped:**
+- Hadamard: every gap below 2000 was announced in Aug 2026.
+- Lonely runner: proved for up to 10 runners; 11 is out of reach.
+- Superpermutation n=7: 5905 was found in Aug 2026.
+- Wieferich / Wall–Sun–Sun: PrimeGrid did 2^64.
+- Goldbach, 196, Riemann zeros: no home-PC value, or a risk of false alarms.
+- Hadwiger–Nelson, happy-ending 7-gon, kissing numbers, Conway-99, Moore-57, MOLS(10), reconstruction n=12, R(5,5): beyond any home PC, or need new ideas rather than CPU time.
+- No-three-in-line: everything up to n=70 was solved in 2026. My prototype couldn't reach the open n=71; that needs a SAT solver.
+- Euler sixth powers and prime gaps: built neither, for lack of time.
+
+## How correctness was checked
+- **Known results reproduced in tests:**
+  - matrix multiplication: Strassen 7, 2×2×3 → 11, Laderman 23, and an integer lift of Strassen;
+  - sum of three cubes: Booker's 33, Booker–Sutherland's 42 and 3, plus a brute-force cross-check over 21 small k;
+  - Brocard: 4, 5, 7, and a prime-by-prime cross-check against Python;
+  - Collatz: glide records against brute force;
+  - perfect cuboid: Euler-brick counts against a filter-free brute force;
+  - magic square: pair lists against brute force, including e > 2^32;
+  - Beal: exact-hit counts against brute force;
+  - cap sets: maxima 4, 9 and 20.
+- **Verifiers:** every one is separate Python code with exact integers, fuzzed with damaged candidates in `selftest`.
+- **Three fresh-reviewer passes** (subagents) covered all searchers, the runner and the safety rules. Real bugs found and fixed:
+  - a 64-bit overflow in magic squares (it would have silently skipped ground from about unit 8);
+  - a missed-roots bug for k=975 in sum of three cubes (caught by my own brute-force test);
+  - `publish` could push the user's own commits (rewritten to use a private index plus commit-tree, and tested);
+  - CPU- vs wall-clock time-outs;
+  - candidates lost from failed units;
+  - a runner crash in Beal's `exhausted()` (caught by the end-to-end run);
+  - repeated alerts in matmul;
+  - plus about 20 smaller fixes, all listed in the progress log above.
+
+## What to do on your computer
+Follow **SETUP.md**: `git clone …`, `./mathrun install` (it prints the one `apt` line if anything is missing), `./mathrun selftest`, `./mathrun start`, `./mathrun dashboard`. Optional extras: `libgmp-dev` for speed, `./mathrun add-autostart`, ntfy alerts, GitHub Pages publishing.
+
+## Top 5 next steps
+1. **Matrix multiplication**: add the symmetric (Z₃-invariant) flip graph of Moosbauer & Poole and smarter plateau handling, and try more rectangular formats where 2025–26 papers still find gains. This is the best shot at a real record.
+2. **Sum of three cubes**: port Booker–Sutherland's cubic-reciprocity and adaptive sieving tricks (2–4× fewer z) from their open-source code.
+3. **Perfect cuboid**: a faster pair test (legs of b ∩ legs of a) and the perfect-cuboid-specific divisibility facts (7, 13, 19, 37).
+4. **New searchers**: Euler sixth powers, using the Resta–Meyrignac method, and first-occurrence prime gaps, which have real record potential and need GMP.
+5. **No-three-in-line n ≥ 71**: vendor CaDiCaL (MIT) and use a symmetric SAT encoding like Heule's.

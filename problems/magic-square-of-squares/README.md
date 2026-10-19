@@ -25,7 +25,7 @@ c-b    c+a+b  c-a
 - For e = 5^14 (beyond 2^32, where the pair values pass 2^64), every listed pair is exact. A reviewer caught an earlier 64-bit overflow here, now fixed with 128-bit arithmetic.
 - No candidates appear below 10^6 (as expected, since no solution is known).
 
-**Speed.** About **4 million centres per second per core** near e = 10^7, falling to roughly 1 million per second near e = 10^12. At 4 hours a day on 7 cores the searcher passes e = 10^12 (entries around 2×10^24) within a few weeks.
+**Speed.** About **4 million centres per second per core** near e = 10^7, falling to roughly 2 million per second near e = 10^12. At 4 hours a day on 7 cores the searcher passes e = 10^12 (entries around 2×10^24) within a few weeks.
 
 **Realistic odds.** Low. Many experts suspect no solution exists, and there are partial results pointing that way. Serious searchers (Boyer, Bremner, Bernstein, the "fituvalu" project) may already have gone further by other methods; their exact limits aren't clearly published. The searcher is cheap and exact, and it walks steadily into ground that is at least not documented as searched.
 
