@@ -29,6 +29,8 @@ def run_unit_tests(verbose=False):
     for p in problems.discover(include_toys=True):
         if any(n.startswith("test_") and n.endswith(".py") for n in os.listdir(p.folder)):
             sys.path.insert(0, p.folder)
+            for clash in ("verify", "plugin"):  # every problem has its own verify.py
+                sys.modules.pop(clash, None)
             try:
                 for name in sorted(os.listdir(p.folder)):
                     if name.startswith("test_") and name.endswith(".py"):

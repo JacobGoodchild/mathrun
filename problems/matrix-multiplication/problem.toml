@@ -1,0 +1,9 @@
+name = "Fast matrix multiplication"
+category = "Computer science"
+mode = "search"
+weight = 3
+unit_seconds = 150
+binaries = ["flipgraph"]
+summary = "Find ways to multiply small matrices with fewer multiplications than anyone knows (flip-graph search over GF(2))."
+record = "3x3: 23 (Laderman 1976); 4x4: 47 over GF(2) (AlphaTensor 2022), 48 in general (AlphaEvolve 2025); 5x5: 93 (Moosbauer & Poole 2025)"
+case_name = "flips"
