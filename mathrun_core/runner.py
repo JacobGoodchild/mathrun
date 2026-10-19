@@ -286,8 +286,14 @@ class Runner:
                 continue
             if sum(1 for j in self.jobs if j.problem is p) >= p.max_parallel:
                 continue
-            if hasattr(p.plugin, "exhausted") and p.plugin.exhausted(st["plugin"], st["ledger"]):
-                continue
+            if hasattr(p.plugin, "exhausted"):
+                try:
+                    if p.plugin.exhausted(st["plugin"], ledger.Ledger(st["ledger"])):
+                        continue
+                except Exception as e:  # a plugin bug must never take the runner down
+                    log.exception("%s: exhausted() failed", p.slug)
+                    self._fail(p, "plugin error in exhausted(): %s" % e)
+                    continue
             out.append(p)
         return out
 
@@ -455,7 +461,10 @@ class Runner:
         led.complete(j.index)
         st["ledger"] = led.to_dict()
         if hasattr(p.plugin, "merge"):
-            p.plugin.merge(st["plugin"], j.unit, result)
+            try:
+                p.plugin.merge(st["plugin"], j.unit, result)
+            except Exception:
+                log.exception("%s: merge() failed (unit still counted)", p.slug)
         for b in result.get("bests", []):
             st["bests"] = (st["bests"] + [dict(b, t=round(time.time()))])[-20:]
         for n in result.get("notes", []):
@@ -474,7 +483,10 @@ class Runner:
         now = time.monotonic()
         if now - self.last_history.get(p.slug, -1e9) >= HISTORY_EVERY_S or self.max_units:
             self.last_history[p.slug] = now
-            append_history(p, st, p.plugin.frontier(st["plugin"], led))
+            try:
+                append_history(p, st, p.plugin.frontier(st["plugin"], led))
+            except Exception:
+                log.exception("%s: could not record history", p.slug)
 
     # ---------- candidate pipeline ----------
     def _new_candidate(self, p, j, c):

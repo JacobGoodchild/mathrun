@@ -48,7 +48,7 @@ def problem_summary(p, st, running_jobs=0, paused_jobs=0):
     elif paused_jobs:
         state = "paused"
     else:
-        state = "idle"
+        state = "queued"
     return {
         "slug": p.slug,
         "name": p.name,

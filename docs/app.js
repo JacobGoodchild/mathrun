@@ -49,6 +49,7 @@ function statePill(state) {
   const s = state || "idle";
   let cls = "idle";
   if (s === "running") cls = "good";
+  else if (s === "queued") cls = "idle";
   else if (s.startsWith("paused: possible") || s.startsWith("stopped")) cls = "bad";
   else if (s.startsWith("paused")) cls = "warn";
   return `<span class="pill ${cls}">${esc(s)}</span>`;
@@ -218,8 +219,8 @@ function card(p, hist) {
     ${p.last_error ? `<div class="err">Last problem: ${esc(p.last_error)}</div>` : ""}
     <div class="kv">
       <div>Speed<b>${p.speed_per_cpu_s ? fmtNum(p.speed_per_cpu_s) + "/s" : "–"}</b>${esc(p.speed_unit)} per core</div>
-      <div>Compute<b>${fmtHours(p.cpu_hours)}</b>${fmtNum(p.units_done)} units</div>
-      <div>Checkpoint<b>${esc(ago(p.last_checkpoint))}</b>${p.candidates_total ? p.candidates_total + " candidates" : "no candidates"}</div>
+      <div>Compute<b>${fmtHours(p.cpu_hours)}</b>${fmtNum(p.units_done)} unit${p.units_done === 1 ? "" : "s"}</div>
+      <div>Checkpoint<b>${esc(ago(p.last_checkpoint))}</b>${p.candidates_total ? p.candidates_total + (p.candidates_total === 1 ? " candidate" : " candidates") : "no candidates"}</div>
     </div></a>`;
 }
 

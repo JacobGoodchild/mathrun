@@ -87,6 +87,18 @@ class TestPipeline(unittest.TestCase):
             r._fail(p, "boom")
         self.assertTrue(st["disabled_reason"])
 
+    def test_every_real_plugin_hooks_run(self):
+        # exhausted/unit/frontier must work with the real objects the runner passes
+        for p in problems.discover():
+            st = runner.fresh_state(p)
+            led = runner.ledger.Ledger(st["ledger"])
+            if hasattr(p.plugin, "exhausted"):
+                self.assertFalse(p.plugin.exhausted(st["plugin"], led), p.slug)
+            u = p.plugin.unit(0, st["plugin"])
+            argv = p.plugin.argv(u, {"dir": p.folder, "bin": p.path("bin"), "work": self.tmp, "seconds": 5})
+            self.assertTrue(argv, p.slug)
+            self.assertIn("text", p.plugin.frontier(st["plugin"], led), p.slug)
+
     def test_same_unit_failing_repeatedly_disables(self):
         p = toy()
         r = runner.Runner(cfg=self.cfg, max_units=1, problem_list=[p])
