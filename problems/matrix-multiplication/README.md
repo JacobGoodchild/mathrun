@@ -17,6 +17,9 @@
 | 3×3×4, 3×3×5, 3×4×4 | 29, 36, 38 | Smirnov 2013 |
 | 2×4×5, 2×5×5, 3×5×5 | 32, 40, 58 | AlphaEvolve 2025; Hopcroft & Kerr 1971; Sedoglavic & Smirnov 2021 |
 | 3×3×6, 4×4×6 | 40, 73 | Smirnov 2013, 2023 |
+| 3×3×7, 3×6×6 | 49, 80 | constructions from smaller schemes (no dedicated search listed): the most promising targets |
+| 3×4×6, 3×5×6, 2×5×6, 3×4×7, 4×4×7 | 54, 68, 47, 63, 85 | AlphaEvolve 2025 |
+| 4×5×6, 5×5×6 | 90, 110 | Kauers & Wood 2025 |
 
 Recent flip-graph papers keep improving rectangular formats: Kauers & Wood 2025 (~30 formats), Perminov 2025–26 (79 schemes). The small square cases above have been searched hard.
 
