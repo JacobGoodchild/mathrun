@@ -1,0 +1,9 @@
+name = "Sum of three cubes"
+category = "Number theory"
+mode = "range"
+weight = 3
+unit_seconds = 150
+binaries = ["cubes"]
+summary = "Write 114, 390, 627, 633, 732, 921 and 975 as x³ + y³ + z³ (the last open cases below 1000)."
+record = "searched: all |z| ≤ 10^19 with d ≤ 10^19/54 (Booker & Sutherland, Charity Engine, 2020)"
+case_name = "d values"
