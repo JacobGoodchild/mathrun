@@ -190,3 +190,4 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - 2026-10-19 07:25 Shortlist researched and written to docs/problem-shortlist.md. Dropped: Hadamard (all gaps <2000 announced Aug 2026), lonely runner (proved to 10), superpermutation n=7 (5905 found Aug 2026), Wieferich/WSS (PrimeGrid did 2^64), Goldbach, 196, RH, Hadwiger-Nelson, happy ending, kissing, Conway-99/Moore-57, MOLS10, reconstruction, R(5,5).
 - Decision: no-three-in-line target moved to n >= 71 (n <= 70 all solved in 2026).
 - Decision: build order = Brocard, matrix multiplication, sum of three cubes, perfect cuboid, Collatz, cap sets, then Beal / sixth powers / magic squares / sorting networks / no-three-in-line / prime gaps as time allows.
+- 2026-10-19 07:18 Searcher 1: Brocard (from n=10^15, Wilson-trick sieve, ~2.4M n/s/core). Reproduces 4,5,7; cross-checked vs Python prime by prime.

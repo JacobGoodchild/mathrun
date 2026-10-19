@@ -1,0 +1,9 @@
+name = "Brocard's problem"
+category = "Number theory"
+mode = "range"
+weight = 3
+unit_seconds = 150
+binaries = ["brocard"]
+summary = "Is n! + 1 a perfect square for any n other than 4, 5 and 7?"
+record = "no solutions for n up to 10^15 (Epstein & Glickman 2020)"
+case_name = "n values"
