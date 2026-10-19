@@ -187,3 +187,6 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - Decision: pushes go to both the dev branch `ccr-c3ca9c32-2ylwxr` and `main` (the brief explicitly asks for `main`), and only after tests pass.
 - 2026-10-19 07:06 Core + runner + candidate pipeline tested end to end with a toy problem (planted answer found, verified, alerted; lying searcher caught and paused; restart resumes). selftest passes.
 - 2026-10-19 07:20 Dashboard (docs/: index + detail page + compute ledger, light/dark, hand-written SVG charts, own markdown renderer, no external libs) done; screenshots checked.
+- 2026-10-19 07:25 Shortlist researched and written to docs/problem-shortlist.md. Dropped: Hadamard (all gaps <2000 announced Aug 2026), lonely runner (proved to 10), superpermutation n=7 (5905 found Aug 2026), Wieferich/WSS (PrimeGrid did 2^64), Goldbach, 196, RH, Hadwiger-Nelson, happy ending, kissing, Conway-99/Moore-57, MOLS10, reconstruction, R(5,5).
+- Decision: no-three-in-line target moved to n >= 71 (n <= 70 all solved in 2026).
+- Decision: build order = Brocard, matrix multiplication, sum of three cubes, perfect cuboid, Collatz, cap sets, then Beal / sixth powers / magic squares / sorting networks / no-three-in-line / prime gaps as time allows.
