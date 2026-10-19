@@ -29,6 +29,16 @@ def problem_summary(p, st, running_jobs=0, paused_jobs=0):
         front = {"text": "frontier unavailable (%s)" % e}
     cands = st.get("candidates", [])
     verified = [c for c in cands if c.get("status", "").startswith("VERIFIED")]
+    open_cands = [c for c in cands if c.get("status", "").startswith(("VERIFIED", "pending"))]
+    front = dict(front)
+    if st.get("bug"):
+        # a rejected candidate means the searcher may be wrong: nothing it claimed is trusted
+        front["text"] = "UNTRUSTED until checked (a candidate failed verification): " + \
+            str(front.get("text", ""))
+        front["untrusted"] = True
+    elif open_cands:
+        front["text"] = str(front.get("text", "")) + \
+            " - except %d candidate(s) under review" % len(open_cands)
     if st.get("bug"):
         state = "paused: possible searcher bug"
     elif st.get("disabled_reason"):

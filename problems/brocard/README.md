@@ -17,7 +17,7 @@
 
 The arithmetic is 64-bit Montgomery multiplication. The Jacobi routine is branch-light, and the tests check it against a textbook version on 20 million random inputs.
 
-**What counts as a win.** Any n > 7 with n! + 1 a perfect square. Because n! has around 10^16 digits here, no computer can test squareness directly. A candidate is therefore re-checked by `verify.py`, which is separate code. It uses 64 different primes, plain Python integers and Euler's criterion. Passing means "a square modulo 264 primes in total", which is overwhelming evidence but not a proof, and the dashboard says so.
+**What counts as a win.** Any n > 7 with n! + 1 a perfect square. Because n! has around 10^16 digits here, no computer can test squareness directly. A candidate is therefore re-checked by `verify.py`, which is separate code. It uses 64 different primes (starting a million above n, well clear of the searcher's), plain Python integers and Euler's criterion. Passing means "a square modulo 264 primes in total", which is overwhelming evidence but not a proof, and the dashboard says so.
 
 **Tests (reproducing known results).**
 - The searcher finds exactly 4, 5 and 7 below 1000, matching an exact brute-force check with big integers.

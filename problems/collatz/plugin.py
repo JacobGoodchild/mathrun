@@ -16,15 +16,19 @@ def argv(u, ctx):
     return [os.path.join(ctx["bin"], "collatz"), str(u["hi"]), str(u["lo"]), str(u["count"]), str(u["k"])]
 
 
-def drops(n, limit=MAX_PY_STEPS):
-    """Exact big-integer check that n's trajectory goes below n."""
+def glide(n, limit=MAX_PY_STEPS):
+    """Exact big-integer glide (standard 3n+1 / n/2 steps until below n), or None."""
     v, steps = n, 0
     while v >= n:
-        v = v // 2 if v % 2 == 0 else (3 * v + 1) // 2
+        v = 3 * v + 1 if v & 1 else v >> 1
         steps += 1
-        if steps > limit:
-            return False
-    return True
+        if steps > 2 * limit:
+            return None
+    return steps
+
+
+def drops(n, limit=MAX_PY_STEPS):
+    return glide(n, limit) is not None
 
 
 def parse(u, proto):
@@ -32,12 +36,15 @@ def parse(u, proto):
         raise ValueError("wrong count")
     cands = list(proto["cands"])
     # 128-bit overflow cases are finished off here with Python's big integers.
+    best = dict(proto["bests"][0]) if proto["bests"] else None
     for note in proto["notes"]:
         n = int(note["overflow"])
-        if not drops(n):
+        g = glide(n)
+        if g is None:
             cands.append({"kind": "solution", "summary": "n=%d did not drop below itself" % n,
                           "data": {"n": str(n)}})
-    best = proto["bests"][0] if proto["bests"] else None
+        elif best is None or g > best["glide"]:
+            best = {"summary": "longest glide in unit: n=%d, %d steps" % (n, g), "n": str(n), "glide": g}
     return {"cases": u["count"], "candidates": cands, "best": best, "bests": []}
 
 

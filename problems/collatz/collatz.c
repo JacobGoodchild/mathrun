@@ -60,7 +60,8 @@ int main(int argc, char **argv) {
     uint64_t count = mr_parse_u64(argv[3]);
     int K = atoi(argv[4]);
     if (K < 4 || K > 30 || (count & (((uint64_t)1 << K) - 1)) || (start & ((((u128)1) << K) - 1))
-        || start < ((u128)1 << (K + 8))) { fprintf(stderr, "bad arguments\n"); return 2; }
+        || start < ((u128)1 << (K + 8)) || start >= ((u128)1 << 96)
+        || start + count < start) { fprintf(stderr, "bad arguments\n"); return 2; }
     build_sieve(K, start);
     u128 pow3[64];
     pow3[0] = 1;

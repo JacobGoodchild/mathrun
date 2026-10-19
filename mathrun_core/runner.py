@@ -34,6 +34,7 @@ HISTORY_EVERY_S = 300
 STATUS_EVERY_S = 20
 GUARD_EVERY_S = 5
 MAX_FAILS_IN_A_ROW = 8
+MAX_FAILS_SAME_UNIT = 5
 MAX_CANDS_PER_UNIT = 25
 VERIFY_TIMEOUT_S = 1800
 KEEP_FAILED_OUTPUTS = 5
@@ -375,7 +376,7 @@ class Runner:
                     log.warning("%s unit %d ran too long; killing", j.problem.slug, j.index)
                     self._kill(j.proc)
                     self._reap(j.proc, block=True)
-                    self._fail(j.problem, "unit %d timed out" % j.index)
+                    self._fail(j.problem, "unit %d timed out" % j.index, j.index)
                     self._cleanup_files(j, keep=True)
                     continue
                 still.append(j)
@@ -405,8 +406,14 @@ class Runner:
             except OSError:
                 pass
 
-    def _fail(self, p, why):
+    def _fail(self, p, why, index=None):
         st = self.states[p.slug]
+        if index is not None:
+            # the same unit failing again and again (while others succeed) must not loop forever
+            uf = st.setdefault("unit_failures", {})
+            uf[str(index)] = uf.get(str(index), 0) + 1
+            if uf[str(index)] >= MAX_FAILS_SAME_UNIT:
+                st["disabled_reason"] = "unit %d failed %d times: %s" % (index, uf[str(index)], why)
         st["failures_in_a_row"] += 1
         st["failures_total"] += 1
         delay = min(3600, 15 * 2 ** min(st["failures_in_a_row"], 10))
@@ -425,7 +432,7 @@ class Runner:
         self.session_cpu[p.slug] += cpu
         st["cpu_seconds"] += cpu
         if code != 0:
-            self._fail(p, "searcher exited with code %s on unit %d" % (code, j.index))
+            self._fail(p, "searcher exited with code %s on unit %d" % (code, j.index), j.index)
             self._cleanup_files(j, keep=True)
             return
         try:
@@ -438,7 +445,7 @@ class Runner:
                 raise ValueError("%d candidates in one unit - surely a bug" % len(proto["cands"]))
             result = p.plugin.parse(j.unit, proto)
         except Exception as e:
-            self._fail(p, "bad output from unit %d: %s" % (j.index, e))
+            self._fail(p, "bad output from unit %d: %s" % (j.index, e), j.index)
             self._cleanup_files(j, keep=True)
             return
         # Candidates are written to disk before anything else happens.

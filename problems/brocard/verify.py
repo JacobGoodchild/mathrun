@@ -56,7 +56,7 @@ def check(n):
         if r * r == v:
             return 0, "EXACT: %d! + 1 = %d^2" % (n, r)
         return 1, "%d! + 1 is not a perfect square (exact check)" % n
-    q = n + 2001
+    q = n + 1_000_000  # well past the <=200 primes the searcher used just above its window
     tested = 0
     while tested < 64:
         q += 1

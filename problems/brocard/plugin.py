@@ -18,6 +18,8 @@ def parse(u, proto):
     done = proto["done"]
     if int(done["cases"]) != u["b"] - u["a"]:
         raise ValueError("searcher covered %s values, expected %d" % (done["cases"], u["b"] - u["a"]))
+    if int(done.get("survivors", 0)) != len(proto["cands"]):
+        raise ValueError("%s survivors but %d reported" % (done.get("survivors"), len(proto["cands"])))
     return {"cases": int(done["cases"]), "candidates": proto["cands"]}
 
 

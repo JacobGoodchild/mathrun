@@ -20,7 +20,7 @@
 - The divisibility facts hold for every small primitive Euler brick.
 - The verifier rejects Euler bricks that aren't perfect, plus zero, negative and non-numeric edges.
 
-**Speed.** About **7,500 odd edges per second per core** on the build machine. This varies a lot: an a with many divisors can have 16,000 legs and 10^8 pairs. A unit takes about 2 minutes. At 4 hours a day on 7 cores that's about 8×10^9 odd edges a month, so the frontier moves from 2.5000×10^13 to about 2.5016×10^13 per month.
+**Speed.** About **7,500 odd edges per second per core** on the build machine. This varies a lot: an a with many divisors can have over 100,000 legs (a = 25003632428775 has 114,817 and takes about 100 seconds on its own), but no unit comes near the runner's 30-minute limit. A unit takes about 2 minutes. At 4 hours a day on 7 cores that's about 8×10^9 odd edges a month, so the frontier moves from 2.5000×10^13 to about 2.5016×10^13 per month.
 
 **Realistic odds.** Very low. Many mathematicians suspect no perfect cuboid exists, and the published searches went much further, probably with smarter methods than this one. What the searcher honestly adds is new ground above the published odd-edge bound, plus a growing count of Euler bricks met along the way. Speed-up ideas: a pair test based on factoring b (legs of b ∩ legs of a), and further proven divisibility facts specific to perfect cuboids (for example 7, 13, 19 and 37).
 

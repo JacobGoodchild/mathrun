@@ -80,8 +80,10 @@ def initial_state():
 def unit(index, state):
     fmt = FORMATS[SCHEDULE[index % len(SCHEDULE)]]
     n, m, p = fmt[:3]
-    return {"n": n, "m": m, "p": p, "seed": 1000003 * index + 17, "target": target(fmt),
-            "start": start_scheme(state, fmt)}
+    best = state.get("best", {}).get(key(n, m, p))
+    tgt = target(fmt) if not best else min(target(fmt), best["rank"])  # never re-report our own find
+    return {"n": n, "m": m, "p": p, "seed": 1000003 * index + 17, "target": tgt,
+            "record": target(fmt), "start": start_scheme(state, fmt)}
 
 
 def argv(u, ctx):
@@ -111,10 +113,13 @@ def merge(state, u, result):
     b = result["scheme"]
     k = key(b["n"], b["m"], b["p"])
     old = state.setdefault("best", {}).get(k)
-    if old is None or b["rank"] < old["rank"]:
+    if old is None or b["rank"] <= old["rank"]:
+        # same rank: still keep the end of the walk, so the next unit continues from there
         state["best"][k] = {"rank": b["rank"], "terms": b["terms"]}
-        result["bests"].append({"summary": "<%s> reached rank %d over GF(2) (record %d)" % (
-            k.replace("x", ","), b["rank"], u["target"]), "format": k, "rank": b["rank"]})
+        if old is None or b["rank"] < old["rank"]:
+            result["bests"].append({"summary": "<%s> reached rank %d over GF(2) (record %d)" % (
+                k.replace("x", ","), b["rank"], u.get("record", u["target"])), "format": k,
+                "rank": b["rank"]})
 
 
 def frontier(state, ledger):

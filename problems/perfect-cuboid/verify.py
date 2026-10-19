@@ -14,9 +14,16 @@ def is_square(n):
 
 
 def check(a, b, c):
-    try:
-        a, b, c = int(a), int(b), int(c)
-    except (TypeError, ValueError):
+    def whole(v):
+        if isinstance(v, bool):
+            return None
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str) and v.isdigit():
+            return int(v)
+        return None
+    a, b, c = whole(a), whole(b), whole(c)
+    if None in (a, b, c):
         return 1, "edges are not whole numbers"
     if min(a, b, c) <= 0:
         return 1, "edges must be positive"

@@ -87,6 +87,24 @@ class TestPipeline(unittest.TestCase):
             r._fail(p, "boom")
         self.assertTrue(st["disabled_reason"])
 
+    def test_same_unit_failing_repeatedly_disables(self):
+        p = toy()
+        r = runner.Runner(cfg=self.cfg, max_units=1, problem_list=[p])
+        r.states[p.slug] = runner.fresh_state(p)
+        for _ in range(runner.MAX_FAILS_SAME_UNIT):
+            r._fail(p, "boom", 7)
+            r.states[p.slug]["failures_in_a_row"] = 0  # as if other units succeeded in between
+        self.assertIn("unit 7", r.states[p.slug]["disabled_reason"])
+
+    def test_frontier_marked_when_candidates_or_bug(self):
+        from mathrun_core import status
+        p = toy()
+        st = runner.fresh_state(p)
+        st["candidates"] = [{"id": "x", "status": "pending verification"}]
+        self.assertIn("under review", status.problem_summary(p, st)["frontier"]["text"])
+        st["bug"] = {"candidate": "x"}
+        self.assertIn("UNTRUSTED", status.problem_summary(p, st)["frontier"]["text"])
+
     def test_bad_output_not_counted(self):
         p = toy()
         r = runner.Runner(cfg=self.cfg, max_units=1, problem_list=[p])

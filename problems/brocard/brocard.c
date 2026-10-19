@@ -2,8 +2,8 @@
  *
  * Sieve test for a window of n values [A, B). If n!+1 = m^2 then n!+1 must
  * be a square (quadratic residue, or 0) modulo every prime p. Each prime
- * rules out about half of the n values that are left, so ~40-60 primes
- * clear a window of 10^8 numbers.
+ * rules out about half of the n values that are left, so ~26-30 primes
+ * clear a window of 2.5*10^8 numbers.
  *
  * The trick that makes this fast (as in Berndt & Galway): pick primes p
  * just ABOVE B. By Wilson's theorem (p-1)! = -1 (mod p), so
