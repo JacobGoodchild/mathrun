@@ -78,8 +78,9 @@ def start_scheme(state, fmt):
     best = state.get("best", {}).get(key(n, m, p))
     if best:
         return best["terms"]
-    if (n, m, p) == (4, 4, 4):
-        return kron(STRASSEN, (2, 2, 2), STRASSEN, (2, 2, 2))  # rank 49
+    # Note: Strassen-squared (rank 49) for 4x4 looks like a head start, but it shares no
+    # factors, so the walk can't move away from it (tested: stuck at 49). Like Kauers &
+    # Moosbauer we start from the schoolbook method and let the walk continue across units.
     return None
 
 

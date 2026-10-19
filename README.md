@@ -10,7 +10,7 @@ The thinking was done once, up front: choosing the problems, checking their curr
 
 | Problem | Searches | Starts at | Honest odds |
 |---|---|---|---|
-| [Fast matrix multiplication](problems/matrix-multiplication/README.md) | Fewer multiplications for 3×3, 4×4, 5×5 and 14 rectangular shapes (flip graphs over GF(2), then a lift to integers) | Best scheme found so far | Low, but ordinary PCs still set records here |
+| [Fast matrix multiplication](problems/matrix-multiplication/README.md) | Fewer multiplications for 3×3, 4×4, 5×5 and 20 rectangular shapes (flip graphs over GF(2), then a lift to integers) | Best scheme found so far | Low, but ordinary PCs still set records here |
 | [Brocard's problem](problems/brocard/README.md) | n! + 1 = m² | n = 10^15 (published bound) | No new solution expected; extends the verified bound |
 | [Sum of three cubes](problems/sum-of-three-cubes/README.md) | x³+y³+z³ = 114, 390, 627, 633, 732, 921, 975 | Just past Booker & Sutherland's 2020 search | Lottery ticket |
 | [Perfect cuboid](problems/perfect-cuboid/README.md) | A box with all 7 lengths whole | Odd edge 2.5×10^13 | Very low |

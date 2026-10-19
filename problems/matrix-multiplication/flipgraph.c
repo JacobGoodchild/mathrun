@@ -175,7 +175,7 @@ int main(int argc, char **argv) {
     int start_rank = R;
     uint64_t flips = 0, plateau = 0, plus_count = 0, tries = 0, fails = 0;
     /* walk length before a plus move; grows with the rank like in Kauers-Moosbauer */
-    uint64_t limit = 20000ULL * (uint64_t)R;
+    uint64_t limit = (getenv("MR_FLIP_LIMIT") ? strtoull(getenv("MR_FLIP_LIMIT"), 0, 10) : 20000ULL) * (uint64_t)R;
     double t0 = mr_cpu_seconds();
     while (1) {
         if ((++tries & 4095) == 0 && mr_cpu_seconds() - t0 > budget) break;

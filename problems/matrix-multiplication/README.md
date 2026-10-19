@@ -29,7 +29,7 @@ Recent flip-graph papers keep improving rectangular formats: Kauers & Wood 2025 
 3. A **reduction** happens when a factor becomes zero or two terms share two factors. The rank drops by one; this is how new schemes are found.
 4. A **plus move**, x⊗y⊗z + x′⊗y′⊗z′ = (x+x′)⊗y⊗z + x′⊗(y+y′)⊗z + x′⊗y′⊗(z+z′), raises the rank by one to escape a dead end.
 5. Each unit is a 2.5-minute random walk. The best scheme for each format is checkpointed, so the next unit carries on from where the last one stopped.
-6. 4×4 starts from Strassen applied twice (49 multiplications).
+6. Every format starts from the schoolbook method. Strassen applied twice (49 for 4×4) looks like a head start, but it shares no factors, so the walk gets stuck there (tested). From the schoolbook method, 4×4 reaches 52 in 2.5 minutes and keeps descending across units.
 
 **What counts as a win.** A correct scheme with fewer multiplications than the record above. Before anything is shown, `verify.py` rebuilds the full tensor with plain Python sets (separate code) and checks every Brent equation, then checks the rank is really below its own copy of the record table. A GF(2) win must also be *lifted* to integer coefficients before it counts for ordinary numbers. Some GF(2) schemes cannot be lifted (Kauers & Moosbauer saw this for 4×5×5), so a hit means "tell an expert", not "announce".
 
@@ -38,7 +38,7 @@ Recent flip-graph papers keep improving rectangular formats: Kauers & Wood 2025 
 - The tensor product of Strassen with itself gives a correct 49-term 4×4 scheme.
 - The verifier rejects schemes with a flipped bit, a missing term, an out-of-range factor, or a rank claim that doesn't match the terms.
 
-**Speed.** About 1–2 million flips per second per core. On the build machine, in 60 seconds from scratch, 3×4×5 got to 52 and 4×4×5 to 68. 4×4 from Strassen-squared (49) needs much longer walks. Kauers and Moosbauer report needing many CPU-hours per format, which is what a home computer provides over weeks.
+**Speed.** About 1–2 million flips per second per core. On the build machine, in 60 seconds from scratch, 3×4×5 got to 52 and 4×4×5 to 68. 4×4 from the schoolbook method reached 52 in 2.5 minutes; going lower needs much longer walks. Kauers and Moosbauer report needing many CPU-hours per format, which is what a home computer provides over weeks.
 
 **Realistic odds.** Low but genuinely non-zero. This is the one problem on the list where ordinary computers running this exact kind of search have recently set records, and that keeps happening for rectangular formats. Researchers with clusters have searched the small square cases (3×3, 4×4, 5×5) very hard, so a record there would be a real surprise. Expect the dashboard to show steady descent towards the records, and for most formats to stall a little above them.
 
