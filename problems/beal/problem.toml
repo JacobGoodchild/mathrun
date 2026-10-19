@@ -1,0 +1,9 @@
+name = "Beal conjecture"
+category = "Number theory"
+mode = "range"
+weight = 2
+unit_seconds = 150
+binaries = ["beal"]
+summary = "US$1,000,000 question: can A^x + B^y = C^z with all exponents ≥ 3 and no common factor?"
+record = "no counterexample with bases ≤ 250,000 and exponents ≤ 7, or bases ≤ 10,000 and exponents ≤ 100 (Norvig and others)"
+case_name = "base pairs"
