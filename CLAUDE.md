@@ -202,3 +202,4 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - 2026-10-19 11:18 SETUP.md (plain-English Mint guide), ADDING_A_PROBLEM.md and problems/_template/ written.
 - 2026-10-19 11:25 Decision: no-three-in-line dropped after a prototype (symmetric DFS + forward checking solved n=16 but not n=20 in 30 s; the open case n=71 needed a new SAT solver in 2026). Would need a vendored SAT solver; backlog. Decision: favour quality (review, matmul, dashboard) over adding weak searchers.
 - 2026-10-19 11:26 End-to-end run of all 7 searchers under the real runner: caught and fixed a runner crash (exhausted() got a dict, not a Ledger) and made plugin hook errors non-fatal. Dashboard screenshots with live data checked (desktop + phone dark); 'idle' renamed 'queued'.
+- 2026-10-19 11:33 Searcher 8: cap sets dims 7/8 (local search, weight 0.5; reproduces maxima 4/9/20; honest: far below records 236/512).

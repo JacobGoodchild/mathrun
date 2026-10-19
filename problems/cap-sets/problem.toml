@@ -1,0 +1,9 @@
+name = "Cap sets"
+category = "Geometry and combinatorics"
+mode = "search"
+weight = 0.5
+unit_seconds = 150
+binaries = ["capset"]
+summary = "Largest set of points in F₃⁷ and F₃⁸ (a grid of 3^n cells) with no three on a line."
+record = "F₃⁷: 236 (Edel); F₃⁸: 512 (FunSearch, Nature 2023)"
+case_name = "moves"
