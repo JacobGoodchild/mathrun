@@ -24,6 +24,6 @@
 
 **Speed and honest performance.** In a minute or so it reaches about 165 in dimension 7 and about 335 in dimension 8. That is a long way below the records (236 and 512), and it also misses the known optimum in dimension 5 (it finds 40 of 45) and dimension 6 (83 of 112). Records here come from clever algebraic and product constructions, which this simple search doesn't know about.
 
-**Realistic odds.** **Practically none**, which is why it runs at a low weight (0.5). It's included because the problem is famous and it's an honest, cheap baseline. The obvious next step is to seed the search with the known record constructions (Edel's caps; the FunSearch program's output) and look for local improvements, which is what serious attempts do.
+**Realistic odds.** **Practically none**, which is why it runs at a very low weight (0.3). It's included because the problem is famous and it's an honest, cheap baseline. The obvious next step is to seed the search with the known record constructions (Edel's caps; the FunSearch program's output) and look for local improvements, which is what serious attempts do.
 
 **References.** J. Ellenberg & D. Gijswijt, Annals of Math. 185 (2017). B. Romera-Paredes et al., "Mathematical discoveries from program search with large language models", Nature 625 (2024). Y. Edel, "Extensions of generalized product caps", Des. Codes Cryptogr. 31 (2004). arXiv:2206.09804.

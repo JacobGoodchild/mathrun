@@ -23,6 +23,6 @@
 
 **Speed.** About **6×10^8 numbers per second per core** on the build machine; a unit takes about 4 minutes. At 4 hours a day on 7 cores that's about 6×10^13 numbers a day, or about 2×10^15 a month. That moves the verified bound from 2^71 by about one millionth of 2^71 per month.
 
-**Realistic odds.** Essentially zero. Almost all experts believe the conjecture is true, and Barina's GPU code covers ground thousands of times faster than a home CPU. This searcher is here because Collatz is famous and honest work is cheap to show: it checks fresh numbers above the published bound and tracks long glides, but it will not move the frontier in any meaningful way. If you want it to use less of your computer, lower its `weight` in `config.local.toml`.
+**Realistic odds.** Essentially zero. Almost all experts believe the conjecture is true, and Barina's GPU code covers ground thousands of times faster than a home CPU. This searcher is here because Collatz is famous and honest work is cheap to show: it checks fresh numbers above the published bound and tracks long glides, but it will not move the frontier in any meaningful way. It runs at a low weight (0.5), so it gets little of your computer.
 
 **References.** D. Barina, "Improved verification limit for the convergence of the Collatz conjecture", J. Supercomputing 81 (2025). E. Roosendaal, "On the 3x+1 problem" (glide and delay records). T. Tao, "Almost all orbits of the Collatz map attain almost bounded values" (2019).

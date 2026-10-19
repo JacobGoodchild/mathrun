@@ -23,11 +23,11 @@ FORMATS = [
     (2, 4, 5, 32, None, 1),
     (2, 5, 5, 40, None, 1),
     (3, 5, 5, 58, None, 1),
-    (3, 3, 6, 40, None, 1),
+    (3, 3, 6, 40, None, 2),    # feeds the 3x3x7 and 3x6x6 head starts
     (4, 4, 6, 73, None, 1),
     # rectangular formats where recent papers keep finding gains (catalogue read 2026-10-19)
-    (3, 3, 7, 49, None, 2),    # record is a construction: <3,3,1> + <3,3,6>
-    (3, 6, 6, 80, None, 2),    # record is a construction: <1,2,1> x <3,3,6>
+    (3, 3, 7, 49, None, 3),    # record is a construction: <3,3,1> + <3,3,6>
+    (3, 6, 6, 80, None, 3),    # record is a construction: <1,2,1> x <3,3,6>
     (3, 4, 6, 54, None, 1),    # AlphaEvolve 2025
     (3, 5, 6, 68, None, 1),    # AlphaEvolve 2025
     (2, 5, 6, 47, None, 1),    # AlphaEvolve 2025

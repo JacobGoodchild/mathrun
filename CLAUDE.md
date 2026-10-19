@@ -271,3 +271,4 @@ Follow **SETUP.md**: `git clone …`, `./mathrun install` (it prints the one `ap
 5. **No-three-in-line n ≥ 71**: vendor CaDiCaL (MIT) and use a symmetric SAT encoding like Heule's.
 - 2026-10-19 12:32 Sum of three cubes: mod-3 constraint (k = +-3 mod 9 => x=y=z mod 3): skip 3|d, one z sign per d, z steps 3d. 8x fewer z, 1.6x faster overall; famous 33/42/3 and brute-force tests still pass.
 - 2026-10-19 12:40 Matmul: head-start construction (compose.py): glue best smaller schemes by splitting a dimension + cyclic rotations. 4x4 now starts 56 (Strassen blocks) and reached 49 in 100 s (vs 52 from schoolbook); 3x6x6 starts 90 instead of stuck 108; once 3x3x6 hits 40, 3x6x6 starts at its record 80.
+- 2026-10-19 12:41 Decision (user: aim to crack, not re-check): CPU weights now favour real chances - matmul 5 (3x3x7, 3x6x6 and their feeder 3x3x6 boosted), cubes 3, Brocard/cuboid/magic/Beal 2, Collatz 0.5, cap sets 0.3.
