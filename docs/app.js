@@ -85,7 +85,8 @@ function lineChart(box, pts, label) {
   const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
   const x0 = Math.min(...xs), x1 = Math.max(...xs);
   let y0 = Math.min(...ys), y1 = Math.max(...ys);
-  if (y0 === y1) { y0 -= 1; y1 += 1; }
+  const flat = y0 === y1;
+  if (flat) { y0 -= 1; y1 += 1; }
   const X = (x) => L + ((x - x0) / (x1 - x0 || 1)) * (W - L - R);
   const Y = (y) => T + (1 - (y - y0) / (y1 - y0)) * (H - T - B);
   let grid = "";
@@ -101,7 +102,7 @@ function lineChart(box, pts, label) {
   const d = pts.map((p, i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1)).join(" ");
   box.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)} over time">
     ${grid}
-    <path d="${d} L${X(x1)} ${H - B} L${X(x0)} ${H - B} Z" fill="var(--series-1-fill)"/>
+    ${flat ? "" : `<path d="${d} L${X(x1)} ${H - B} L${X(x0)} ${H - B} Z" fill="var(--series-1-fill)"/>`}
     <path d="${d}" fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
     <line class="cross" y1="${T}" y2="${H - B}" stroke="var(--text-muted)" stroke-dasharray="3 3" visibility="hidden"/>
     <circle class="dot" r="5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2" visibility="hidden"/>
