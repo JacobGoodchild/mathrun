@@ -117,6 +117,34 @@ class TestPipeline(unittest.TestCase):
         st["bug"] = {"candidate": "x"}
         self.assertIn("UNTRUSTED", status.problem_summary(p, st)["frontier"]["text"])
 
+    def test_candidate_from_crashed_unit_is_still_verified(self):
+        p = toy()
+        r = runner.Runner(cfg=self.cfg, max_units=1, problem_list=[p])
+        r.states[p.slug] = runner.fresh_state(p)
+        r.session_cpu[p.slug] = 0.0
+        paths.ensure("candidates", p.slug)
+        out = os.path.join(self.tmp, "crash.out")
+        open(out, "w").write('CAND {"kind":"solution","summary":"n=416041631","data":{"n":416041631}}\n')
+        led = runner.ledger.Ledger()
+        led.issue(set())
+        r.states[p.slug]["ledger"] = led.to_dict()
+
+        class P:
+            returncode = 1
+            pid = 1
+        j = runner.Job(p, 0, {}, P(), out, out + ".err")
+        with mock.patch.object(alerts, "send_verified", return_value=[]):
+            r._finish(j, 1, 0.1)                     # crashed: exit code 1, no DONE
+            import time
+            for _ in range(100):
+                r._collect_verifies()
+                if not r.verifies:
+                    break
+                time.sleep(0.05)
+        st = r.states[p.slug]
+        self.assertEqual(st["units_done"], 0)        # the unit is not counted...
+        self.assertTrue(st["candidates"][0]["status"].startswith("VERIFIED"))  # ...but the find is kept
+
     def test_bad_output_not_counted(self):
         p = toy()
         r = runner.Runner(cfg=self.cfg, max_units=1, problem_list=[p])

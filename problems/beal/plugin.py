@@ -25,7 +25,8 @@ def argv(u, ctx):
 
 
 def exhausted(state, ledger):
-    return a_of(ledger.next) > CMAX and a_of(ledger.frontier) > CMAX
+    # nothing new left to hand out once the next unit would start past CMAX
+    return a_of(ledger.next) > CMAX
 
 
 def parse(u, proto):

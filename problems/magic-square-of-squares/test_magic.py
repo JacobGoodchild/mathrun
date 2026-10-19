@@ -39,6 +39,22 @@ class TestMagic(unittest.TestCase):
         for e in want:
             self.assertEqual(got[e], want[e], e)
 
+    def test_large_e_no_overflow(self):
+        # e = 5^14 > 2^32: x values exceed 2^64 and must still be exact
+        e = 5 ** 14
+        out = subprocess.run([BIN, str(e), str(e + 1), "dumpx"], capture_output=True, text=True, check=True).stdout
+        got = [int(v) for v in json.loads([l for l in out.splitlines() if l.startswith("NOTE")][0][5:])["x"]]
+        N = 2 * e * e
+        # exact x values from the Gaussian-integer formula, cross-checked by p^2 + q^2 = 2e^2
+        for x in got:
+            p2 = e * e - x
+            q2 = e * e + x
+            self.assertEqual(math.isqrt(p2) ** 2, p2)
+            self.assertEqual(math.isqrt(q2) ** 2, q2)
+            self.assertEqual(p2 + q2, N)
+        self.assertGreater(max(got), 2 ** 64)
+        self.assertEqual(len(got), len(set(got)))
+
     def test_bremner_seven_squares_rejected(self):
         g = [[373 ** 2, 289 ** 2, 565 ** 2], [360721, 425 ** 2, 23 ** 2], [205 ** 2, 527 ** 2, 222121]]
         self.assertEqual(len({sum(r) for r in g}), 1)  # it is magic...

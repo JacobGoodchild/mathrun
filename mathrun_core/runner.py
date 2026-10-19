@@ -412,6 +412,27 @@ class Runner:
             except OSError:
                 pass
 
+    def _rescue_candidates(self, j):
+        """A failed unit is not counted, but any CAND lines it printed are still saved
+        and verified: a real find must never be lost because something else went wrong."""
+        try:
+            with open(j.out_path, encoding="utf-8", errors="replace") as f:
+                lines = f.read().splitlines()
+        except OSError:
+            return
+        import json
+        found = 0
+        for line in lines:
+            if not line.startswith("CAND ") or found >= MAX_CANDS_PER_UNIT:
+                continue
+            try:
+                c = json.loads(line[5:])
+            except ValueError:
+                continue
+            if isinstance(c, dict):
+                found += 1
+                self._new_candidate(j.problem, j, c)
+
     def _fail(self, p, why, index=None):
         st = self.states[p.slug]
         if index is not None:
@@ -438,6 +459,7 @@ class Runner:
         self.session_cpu[p.slug] += cpu
         st["cpu_seconds"] += cpu
         if code != 0:
+            self._rescue_candidates(j)
             self._fail(p, "searcher exited with code %s on unit %d" % (code, j.index), j.index)
             self._cleanup_files(j, keep=True)
             return
@@ -451,6 +473,7 @@ class Runner:
                 raise ValueError("%d candidates in one unit - surely a bug" % len(proto["cands"]))
             result = p.plugin.parse(j.unit, proto)
         except Exception as e:
+            self._rescue_candidates(j)
             self._fail(p, "bad output from unit %d: %s" % (j.index, e), j.index)
             self._cleanup_files(j, keep=True)
             return
@@ -460,11 +483,15 @@ class Runner:
         led = ledger.Ledger(st["ledger"])
         led.complete(j.index)
         st["ledger"] = led.to_dict()
+        uf = st.get("unit_failures")
+        if uf:  # forget failure counts of units that are now finished
+            st["unit_failures"] = {k: v for k, v in uf.items() if int(k) >= led.frontier and int(k) != j.index}
         if hasattr(p.plugin, "merge"):
             try:
                 p.plugin.merge(st["plugin"], j.unit, result)
-            except Exception:
+            except Exception as e:
                 log.exception("%s: merge() failed (unit still counted)", p.slug)
+                st["merge_error"] = "merge() failed on unit %d: %s" % (j.index, e)
         for b in result.get("bests", []):
             st["bests"] = (st["bests"] + [dict(b, t=round(time.time()))])[-20:]
         for n in result.get("notes", []):
@@ -473,7 +500,7 @@ class Runner:
         st["cases"] += cases
         st["units_done"] += 1
         st["failures_in_a_row"] = 0
-        st["last_error"] = None
+        st["last_error"] = st.pop("merge_error", None)
         if cpu > 0 and cases > 0:
             rate = cases / cpu
             st["speed"] = rate if not st.get("speed") else 0.8 * st["speed"] + 0.2 * rate

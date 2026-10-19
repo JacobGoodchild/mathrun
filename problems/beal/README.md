@@ -4,7 +4,7 @@
 
 **Why it's famous.** It generalises Fermat's Last Theorem (the case x = y = z), which took 358 years and Andrew Wiles to prove. The million-dollar prize and its amateur origin make it one of the best-known open problems in number theory.
 
-**Current status (checked 19 Oct 2026).** Open. Published computer searches have found no counterexample with bases up to 250,000 and exponents up to 7, or bases up to 10,000 and exponents up to 100 (Peter Norvig's searches and follow-ups; Dan Van Kesteren's extension). Without the gcd condition there are many solutions, such as 2³ + 2³ = 2⁴ and 3³ + 6³ = 3⁵. With an exponent of 2 there are coprime ones too (2⁵ + 7² = 3⁴), which is why the rule says "at least 3".
+**Current status (checked 19 Oct 2026).** Open. Published computer searches have found no counterexample with bases up to 250,000 and exponents up to 7, or bases up to 10,000 and exponents up to 100 (Peter Norvig's searches and follow-ups; Dan Van Kesteren's extension). Norvig's page also cites Jarnicki & Konerding's search, with A, B ≤ 200,000 and x, y ≤ 5,000. Some of those searches allow any size of C, while this one caps C at 2^21 too. Without the gcd condition there are many solutions, such as 2³ + 2³ = 2⁴ and 3³ + 6³ = 3⁵. With an exponent of 2 there are coprime ones too (2⁵ + 7² = 3⁴), which is why the rule says "at least 3".
 
 **What this searcher does.** It checks **every A, B and C up to 2^21 = 2,097,152** (8× the published 250,000) with every combination of exponents 3 to 7:
 1. Store C^z mod p (p = 2^61 − 1) for every C ≤ 2^21 and z = 3…7 in a hash table, with a small bit-filter in front of it.

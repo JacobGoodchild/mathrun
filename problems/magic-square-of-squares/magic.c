@@ -70,13 +70,13 @@ static inline gauss gmul(gauss x, gauss y) {
     return z;
 }
 
-static uint64_t X[MAXX];
+static u128 X[MAXX];   /* x is nearly e^2: needs 128 bits once e > 2^32 */
 static int nx;
-static int cmp64(const void *a, const void *b) {
-    uint64_t x = *(const uint64_t *)a, y = *(const uint64_t *)b;
+static int cmp128(const void *a, const void *b) {
+    u128 x = *(const u128 *)a, y = *(const u128 *)b;
     return x < y ? -1 : x > y;
 }
-static int inX(uint64_t v) {
+static int inX(u128 v) {
     int lo = 0, hi = nx - 1;
     while (lo <= hi) { int mid = (lo + hi) / 2; if (X[mid] == v) return 1; if (X[mid] < v) lo = mid + 1; else hi = mid - 1; }
     return 0;
@@ -147,33 +147,34 @@ int main(int argc, char **argv) {
                 }
                 i128 P = z.re < 0 ? -z.re : z.re, Q = z.im < 0 ? -z.im : z.im;
                 if (P > Q) { i128 tmp = P; P = Q; Q = tmp; }
-                if (P > 0 && P != Q && nx < MAXX) X[nx++] = (uint64_t)((Q * Q - P * P) / 2);
+                if (P > 0 && P != Q && nx < MAXX) X[nx++] = (u128)((Q * Q - P * P) / 2);
                 int j = 0;
                 while (j < np && ++s[j] > 2 * ks[j]) { s[j] = 0; j++; }
                 if (j == np) break;
             }
-            qsort(X, nx, 8, cmp64);
+            qsort(X, nx, sizeof(u128), cmp128);
             int m = 0;
             for (int k = 0; k < nx; k++) if (!m || X[k] != X[m - 1]) X[m++] = X[k];
             nx = m;
             if (nx > maxx) maxx = nx;
             if (dump) {
                 printf("NOTE {\"e\":%llu,\"x\":[", (unsigned long long)e);
-                for (int k = 0; k < nx; k++) printf("%s%llu", k ? "," : "", (unsigned long long)X[k]);
+                char xs[48];
+                for (int k = 0; k < nx; k++) printf("%s%s", k ? "," : "", mr_u128_str(X[k], xs));
                 printf("]}\n");
             }
             for (int ia = 0; ia < nx; ia++)
                 for (int ib = 0; ib < ia; ib++) {
-                    uint64_t a = X[ia], b = X[ib];
+                    u128 a = X[ia], b = X[ib];
                     if (!inX(a + b)) continue;
                     if (a == 2 * b) continue;   /* a-b = b would repeat an entry */
                     three++;
                     if (inX(a - b)) {
                         u128 c = (u128)e * e;
-                        char cs[48];
+                        char cs[48], as[48], bs[48];
                         printf("CAND {\"kind\":\"solution\",\"summary\":\"magic square of squares, centre %s\","
-                               "\"data\":{\"e\":%llu,\"a\":%llu,\"b\":%llu}}\n", mr_u128_str(c, cs),
-                               (unsigned long long)e, (unsigned long long)a, (unsigned long long)b);
+                               "\"data\":{\"e\":%llu,\"a\":\"%s\",\"b\":\"%s\"}}\n", mr_u128_str(c, cs),
+                               (unsigned long long)e, mr_u128_str(a, as), mr_u128_str(b, bs));
                     }
                 }
         }
