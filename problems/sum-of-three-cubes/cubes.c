@@ -140,6 +140,11 @@ int main(int argc, char **argv) {
         fprintf(stderr, "bad arguments\n"); return 2;
     }
     for (int i = 0; i < 6; i++) sq[i] = square_table(MODS[i]);
+    /* For k = 3 (mod 9) every cube is 1 (mod 9), so x = y = z = 1 (mod 3); for k = 6 (mod 9)
+     * they are all 2 (mod 3). Then z = c3 (mod 3), and x + y = 2*c3 (mod 3) fixes the sign of
+     * z for each d (since x + y has the sign of k - z^3, i.e. minus the sign of z once
+     * |z| >= 11). This cuts the z values to check by about 6x (as in Booker-Sutherland). */
+    int c3 = (k % 9 == 3) ? 1 : (k % 9 == 6) ? 2 : 0;
     /* primes up to sqrt(D1) */
     uint64_t lim = 1;
     while ((u128)lim * lim < D1) lim++;
@@ -173,6 +178,8 @@ int main(int argc, char **argv) {
         for (uint64_t i = 0; i < w; i++) {
             uint64_t d = lo + i;
             dcount++;
+            /* k = +-3 mod 9 forces x = y = z = c3 (mod 3), so 3 never divides d = |x+y| */
+            if (c3 && d >= 4 && d % 3 == 0) continue;
             int nfac = nf[i] + (cof[i] > 1);
             /* roots modulo d by CRT over prime powers */
             int nr = 1;
@@ -211,11 +218,15 @@ int main(int argc, char **argv) {
             /* walk z = r (mod d) over 3d <= |z| <= Z, both signs */
             u128 zlo = (u128)3 * d;
             if (zlo > Z) continue;
+            int filt = c3 && zlo >= 11;
+            int posok = !filt || (int)(d % 3) == c3, negok = !filt || (int)(d % 3) == (2 * c3) % 3;
+            u128 step = filt ? (u128)3 * d : d;
             for (int a = 0; a < nr; a++) {
                 uint64_t r = R[a] % d;
-                /* positive z: smallest z >= zlo with z = r mod d */
+                /* positive z: smallest z >= zlo with z = r mod d (and z = c3 mod 3) */
                 u128 z = zlo + ((r + d - (uint64_t)(zlo % d)) % d);
-                for (; z <= Z; z += d) {
+                if (filt) while (z % 3 != (u128)c3) z += d;
+                for (; posok && z <= Z; z += step) {
                     zcount++;
                     if (delta_maybe_square(k, d, (uint64_t)z, 0)) {
                         notes++;
@@ -226,7 +237,8 @@ int main(int argc, char **argv) {
                 /* negative z: |z| = -z, -z = (d - r) mod d */
                 uint64_t rn = (d - r) % d;
                 z = zlo + ((rn + d - (uint64_t)(zlo % d)) % d);
-                for (; z <= Z; z += d) {
+                if (filt) while (z % 3 != (u128)((3 - c3) % 3)) z += d;
+                for (; negok && z <= Z; z += step) {
                     zcount++;
                     if (delta_maybe_square(k, d, (uint64_t)z, 1)) {
                         notes++;

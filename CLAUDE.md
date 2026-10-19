@@ -269,3 +269,4 @@ Follow **SETUP.md**: `git clone …`, `./mathrun install` (it prints the one `ap
 3. **Perfect cuboid**: a faster pair test (legs of b ∩ legs of a) and the perfect-cuboid-specific divisibility facts (7, 13, 19, 37).
 4. **New searchers**: Euler sixth powers, using the Resta–Meyrignac method, and first-occurrence prime gaps, which have real record potential and need GMP.
 5. **No-three-in-line n ≥ 71**: vendor CaDiCaL (MIT) and use a symmetric SAT encoding like Heule's.
+- 2026-10-19 12:32 Sum of three cubes: mod-3 constraint (k = +-3 mod 9 => x=y=z mod 3): skip 3|d, one z sign per d, z steps 3d. 8x fewer z, 1.6x faster overall; famous 33/42/3 and brute-force tests still pass.

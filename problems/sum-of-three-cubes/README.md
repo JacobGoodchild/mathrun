@@ -25,7 +25,7 @@ It covers **fresh ground just past Booker & Sutherland's search**: d from 10^19/
 - For 21 small values of k, every solution with 3|x+y| ≤ |z| ≤ 300 found by brute force is also found by the searcher. This test caught a real bug, now fixed: there can be more than 3 cube roots modulo p^e when p² divides k, which matters for k = 975 (divisible by 25).
 - The verifier rejects wrong sums and non-integers.
 
-**Speed.** About **300,000 values of d per second per core** near d = 1.85×10^17, each with about 50 values of z to check. A unit takes about 2 minutes.
+**Speed.** About **480,000 values of d per second per core** near d = 1.85×10^17. Because all seven k are ±3 mod 9, x, y and z must all have the same remainder mod 3. So d divisible by 3 is skipped, only one sign of z is possible for each d, and z steps by 3d: about 6 values of z per d instead of 50. A unit takes about 2 minutes.
 
 **Realistic odds.** Very small. In Heath-Brown's heuristics, the chance of a solution in any range of d you can reach from a home PC is tiny; Booker & Sutherland's 2020 run used roughly 1,000 times more computing than this computer can manage in a year. This searcher does exactly the right thing in exactly the right (unsearched) place, so if lightning strikes it will be noticed, but please treat it as a lottery ticket. Sutherland's open-source code (github.com/AndrewVSutherland/SumsOfThreeCubes) is far more optimised: it uses cubic reciprocity, adaptive sieving and a better z/d ratio. Porting those ideas would be the obvious next step.
 
