@@ -82,7 +82,7 @@ Open `config.local.toml` in a text editor (for example `xed config.local.toml`).
 
 - `workers`: how many cores to use (0 = all but one).
 - `max_temp_c`: the temperature that triggers a pause (default 85).
-- `only_when_idle = true`: only search when you haven't touched the keyboard or mouse for `idle_seconds`.
+- `only_when_idle = true`: only search when you haven't touched the keyboard or mouse for `idle_seconds`. For reliable idle detection on Cinnamon, install the small `xprintidle` tool (`sudo apt install xprintidle`). If mathrun can't tell whether you're idle, it plays safe and stays paused; `./mathrun status` shows "only-when-idle mode, but idle time can't be read" if that happens.
 - `pause_for_programs = ["steam_app"]`: pause automatically while certain programs run.
 - `[problems] skip = ["collatz"]`: don't run a problem. `[problems.weights]` gives a problem more or less CPU time.
 

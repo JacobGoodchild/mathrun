@@ -112,6 +112,10 @@ def user_idle_seconds():
                 return int(digits) / 1000.0
     if shutil.which("loginctl"):
         sid = os.environ.get("XDG_SESSION_ID")
+        if not sid:
+            # started by the systemd user service: find the user's graphical session
+            out = _run(["loginctl", "show-user", str(os.getuid()), "-p", "Display", "--value"])
+            sid = (out or "").strip() or None
         if sid:
             out = _run(["loginctl", "show-session", sid, "-p", "IdleHint",
                         "-p", "IdleSinceHintMonotonic"])
