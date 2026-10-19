@@ -1,0 +1,9 @@
+name = "Collatz conjecture"
+category = "Number theory"
+mode = "range"
+weight = 1
+unit_seconds = 240
+binaries = ["collatz"]
+summary = "Does every starting number reach 1 under n -> n/2, 3n+1? Checking numbers above 2^71."
+record = "all n < 2^71 ≈ 2.36×10^21 checked (Barina 2025)"
+case_name = "numbers"

@@ -192,3 +192,4 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 - Decision: build order = Brocard, matrix multiplication, sum of three cubes, perfect cuboid, Collatz, cap sets, then Beal / sixth powers / magic squares / sorting networks / no-three-in-line / prime gaps as time allows.
 - 2026-10-19 07:18 Searcher 1: Brocard (from n=10^15, Wilson-trick sieve, ~2.4M n/s/core). Reproduces 4,5,7; cross-checked vs Python prime by prime.
 - 2026-10-19 07:33 Searcher 2: matrix multiplication flip graph over GF(2), 14 formats, best scheme per format checkpointed. Reproduces 7/11/15/23. Caught & fixed: wrong hand-typed Strassen constant (verifier caught it), plus-move that undid itself.
+- 2026-10-19 07:38 Searcher 3: Collatz from 2^71 (2^26 sieve, 128-bit, ~6e8 n/s/core). Honest odds: none; included for fame. Decision: sum of three cubes moved later (needs cube roots mod large d; region a home PC can add is tiny).
