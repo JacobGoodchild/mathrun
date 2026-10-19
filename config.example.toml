@@ -1,0 +1,63 @@
+# mathrun settings.
+#
+# Copy this file to config.local.toml (./mathrun install does it for you) and
+# edit the copy. config.local.toml is ignored by git, so personal things such
+# as your ntfy topic never end up on GitHub.
+#
+# Anything you leave out uses the default shown here.
+
+[machine]
+# How many searchers run at once. 0 means "all cores but one".
+workers = 0
+# Searchers run at the lowest CPU priority (19) and the "idle" disk class,
+# so anything you do on the computer always comes first.
+nice = 19
+# Pause everything if the CPU gets hotter than this (degrees C) ...
+max_temp_c = 85
+# ... and carry on once it has cooled to this.
+resume_temp_c = 75
+# If the temperature can't be read at all, run in a gentle on/off cycle
+# instead: this many minutes on, then this many minutes resting.
+fallback_run_minutes = 20
+fallback_rest_minutes = 10
+# Only search while nobody is using the computer?
+only_when_idle = false
+# How long without keyboard/mouse input counts as "idle" (seconds).
+idle_seconds = 300
+# Pause automatically while any of these programs is running (process
+# names, as shown by `ps -e`). Example: ["steam_app", "gamescope", "obs"]
+pause_for_programs = []
+# Hard cap on everything mathrun stores under data/ (logs, checkpoints).
+disk_cap_gb = 5.0
+
+[problems]
+# Leave empty to run every built problem. Otherwise list the slugs to run.
+only = []
+# Problems never to run.
+skip = []
+
+# Change how much CPU a problem gets relative to the others (default comes
+# from each problem's problem.toml). Example:
+# [problems.weights]
+# sum-of-three-cubes = 3
+
+[dashboard]
+port = 8471
+
+[publish]
+# Push a small status snapshot to GitHub (for GitHub Pages) at most once an
+# hour while the runner is going. Off until you switch it on.
+enabled = false
+remote = "origin"
+branch = "main"
+interval_minutes = 60
+
+[alerts]
+# Desktop pop-up (notify-send) when a candidate passes independent checking.
+desktop = true
+# Phone alert through ntfy.sh. Pick a long, hard-to-guess topic name and
+# subscribe to it in the ntfy app. Leave empty to switch off.
+ntfy_topic = ""
+ntfy_server = "https://ntfy.sh"
+# Optional: ask ntfy to also email you (leave empty to switch off).
+ntfy_email = ""

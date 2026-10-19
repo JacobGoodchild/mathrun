@@ -1,0 +1,9 @@
+# Local data: checkpoints, logs, candidates, live status. Never committed.
+/data/
+config.local.toml
+__pycache__/
+*.pyc
+# Build outputs
+problems/*/bin/
+common/build/
+*.o
