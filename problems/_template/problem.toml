@@ -1,0 +1,10 @@
+# Copy this folder to problems/<your-slug>/ (the folder name is the slug) and fill in.
+name = "Your problem"
+category = "Number theory"          # used to group cards on the dashboard
+mode = "range"                      # "range" (walk a frontier) or "search" (random/improving search)
+weight = 1                          # share of CPU compared with other problems
+unit_seconds = 150                  # how long one unit takes on one core (aim for 1-4 minutes)
+binaries = ["searcher"]             # files in bin/ that must exist after `make`
+summary = "One sentence a non-mathematician understands."
+record = "The current world record / verified bound, with who and when."
+case_name = "numbers"               # what the searcher counts ("numbers", "pairs", "flips"...)
