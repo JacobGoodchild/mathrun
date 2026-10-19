@@ -212,16 +212,16 @@ At the bottom of CLAUDE.md, write a dated summary in plain English:
 
 ---
 
-# Summary — Monday 19 October 2026 (written 12:10 UTC, checked again before 15:40 UTC)
+# Summary — Monday 19 October 2026 (final, 12:45 UTC)
 
 ## What you have
-A working platform (runner, guards, crash-safe checkpoints, candidate pipeline with independent verifiers, alerts, dashboard, optional publishing, autostart) and **8 searchers**. Everything passes `./mathrun selftest`, and the whole thing has been run end to end under the real runner.
+A working platform (runner, guards, crash-safe checkpoints, candidate pipeline with independent verifiers, alerts, dashboard, optional publishing, autostart) and **8 searchers**. Every searcher works on **new ground**, hunting for counterexamples, new solutions or new records. Re-finding known answers only happens in the tests, as proof the code is right. CPU time is weighted towards the best chances: matrix multiplication 5, sum of three cubes 3, Brocard, cuboid, magic square and Beal 2, Collatz 0.5, cap sets 0.3. Everything passes `./mathrun selftest`, and the whole thing has been run end to end under the real runner.
 
 | Searcher | Where it starts | Speed (one core, build machine) | Honest odds |
 |---|---|---|---|
-| Fast matrix multiplication (23 formats, GF(2) flip graphs) | schoolbook method; keeps its best scheme per format | 1–2 M flips/s. In 80 s: 3×3×4 → 30 (record 29), 2×4×5 → 33 (32), 3×3×5 → 38 (36); 4×4 → 52 in 150 s (record 47) | Low but real. The best chance of a genuine record, especially 3×3×7 (49) and 3×6×6 (80), whose records are only constructions. Finds are auto-lifted to integers if possible. |
+| Fast matrix multiplication (23 formats, GF(2) flip graphs) | its best scheme per format, or a head start glued together from its best smaller schemes | 1–2 M flips/s. In 80 s: 3×3×4 → 30 (record 29), 2×4×5 → 33 (32), 3×3×5 → 38 (36); 4×4 → 49 in 100 s (record 47) | Low but real. The best chance of a genuine record, especially 3×3×7 (49) and 3×6×6 (80), whose records are only constructions. Finds are auto-lifted to integers if possible. |
 | Brocard n!+1=m² | n = 10^15 (published bound) | 2.4 M n/s → about +7×10^12 a month (4 h/day, 7 cores) | No new solution expected; it really extends the verified bound |
-| Sum of three cubes (114, 390, 627, 633, 732, 921, 975) | just past Booker & Sutherland: d > 10^19/54, \|z\| ≤ 10^19 | 300 k d/s | A lottery ticket in exactly the right, unsearched place |
+| Sum of three cubes (114, 390, 627, 633, 732, 921, 975) | just past Booker & Sutherland: d > 10^19/54, \|z\| ≤ 10^19 | 480 k d/s (mod-3 tricks: 8× fewer z) | A lottery ticket in exactly the right, unsearched place |
 | Perfect cuboid | odd edge 2.5×10^13 | about 7,500 odd edges/s (very uneven) | Very low; extends the published bound slowly |
 | Beal (US$1M) | all bases ≤ 2^21 (8× published), exponents 3–7 | about 1 M base pairs/s; whole job about 600 core-hours (~3 weeks) | Essentially zero; a documented extension |
 | Magic square of squares | e = 1 (no precise published bound found) | 2–4 M centres/s | Low |
@@ -265,7 +265,7 @@ Follow **SETUP.md**: `git clone …`, `./mathrun install` (it prints the one `ap
 
 ## Top 5 next steps
 1. **Matrix multiplication**: add the symmetric (Z₃-invariant) flip graph of Moosbauer & Poole and smarter plateau handling, and try more rectangular formats where 2025–26 papers still find gains. This is the best shot at a real record.
-2. **Sum of three cubes**: port Booker–Sutherland's cubic-reciprocity and adaptive sieving tricks (2–4× fewer z) from their open-source code.
+2. **Sum of three cubes**: the mod-3 constraints are done (1.6× faster). Next, port Booker–Sutherland's cubic reciprocity and adaptive sieving from their open-source code, and speed up the cube-root step, which now dominates.
 3. **Perfect cuboid**: a faster pair test (legs of b ∩ legs of a) and the perfect-cuboid-specific divisibility facts (7, 13, 19, 37).
 4. **New searchers**: Euler sixth powers, using the Resta–Meyrignac method, and first-occurrence prime gaps, which have real record potential and need GMP.
 5. **No-three-in-line n ≥ 71**: vendor CaDiCaL (MIT) and use a symmetric SAT encoding like Heule's.
