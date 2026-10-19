@@ -58,6 +58,22 @@ class TestMatMul(unittest.TestCase):
         self.assertLessEqual(d["rank"], 49)
         self.assertTrue(verify.is_matmul_scheme(4, 4, 4, d["terms"]))
 
+    def test_lifting(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("mm_lift", os.path.join(HERE, "lift.py"))
+        lift = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(lift)
+        P = plugin()
+        signed = lift.lift(2, 2, 2, P.STRASSEN)
+        self.assertIsNotNone(signed)                       # Strassen works over the integers
+        self.assertTrue(verify.integer_scheme_ok(2, 2, 2, signed, P.STRASSEN))
+        bad = [[dict(f) for f in t] for t in signed]
+        k = next(iter(bad[0][0]))
+        bad[0][0][k] = -bad[0][0][k]
+        self.assertFalse(verify.integer_scheme_ok(2, 2, 2, bad, P.STRASSEN))
+        s49 = P.kron(P.STRASSEN, (2, 2, 2), P.STRASSEN, (2, 2, 2))
+        self.assertIsNotNone(lift.lift(4, 4, 4, s49))
+
     def test_verifier_record_logic(self):
         P = plugin()
         good = {"n": 2, "m": 2, "p": 2, "rank": 7, "field": "GF(2)", "terms": P.STRASSEN}

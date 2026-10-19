@@ -39,6 +39,37 @@ def is_matmul_scheme(n, m, p, terms):
     return odd == want
 
 
+def integer_scheme_ok(n, m, p, signed, support):
+    """Independent exact check over Z of a signed scheme with the same support."""
+    if len(signed) != len(support):
+        return False
+    total = {}
+    for (fa, fb, fc), (a, b, c) in zip(signed, support):
+        A = {int(k): v for k, v in fa.items()}
+        B = {int(k): v for k, v in fb.items()}
+        C = {int(k): v for k, v in fc.items()}
+        if set(A) != {q for q in range(n * m) if a >> q & 1} or set(B) != {q for q in range(m * p) if b >> q & 1} \
+                or set(C) != {q for q in range(p * n) if c >> q & 1}:
+            return False
+        if any(v not in (1, -1) for d in (A, B, C) for v in d.values()):
+            return False
+        for u, x in A.items():
+            for w2, y in B.items():
+                for w3, z in C.items():
+                    key = (u // m, u % m, w2 // p, w2 % p, w3 // n, w3 % n)
+                    total[key] = total.get(key, 0) + x * y * z
+    for i in range(n):
+        for j in range(m):
+            for j2 in range(m):
+                for k in range(p):
+                    for k2 in range(p):
+                        for i2 in range(n):
+                            want = 1 if (j == j2 and k == k2 and i == i2) else 0
+                            if total.get((i, j, j2, k, k2, i2), 0) != want:
+                                return False
+    return True
+
+
 def check(data, need_record=True):
     n, m, p = data["n"], data["m"], data["p"]
     terms = data["terms"]
@@ -63,8 +94,14 @@ def check(data, need_record=True):
             if len(terms) == rec and (n, m, p) in ((2, 2, 2), (2, 2, 3), (2, 3, 3), (3, 3, 3)):
                 return 0, msg + " (equals the known value %d: a reproduction, not a record)" % rec
             return 1, msg + ", but that does not beat the record %d" % rec
-        msg += ", BELOW the best known %d. Check whether it lifts to integer coefficients " \
-               "and compare with the live catalogue before telling anyone" % rec
+        msg += ", BELOW the best known %d" % rec
+        if data.get("integer_lift"):
+            if not integer_scheme_ok(n, m, p, data["integer_lift"], terms):
+                return 1, msg + ", but the claimed integer lift is WRONG"
+            msg += "; the integer (+-1) version also checks out exactly over Z"
+        else:
+            msg += "; over GF(2) only (no integer lift found yet)"
+        msg += ". Compare with the live catalogue before telling anyone"
     return 0, msg
 
 

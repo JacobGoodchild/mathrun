@@ -115,7 +115,22 @@ def parse(u, proto):
     b = bests[0]["data"]
     if (b["n"], b["m"], b["p"]) != (u["n"], u["m"], u["p"]) or b["rank"] != len(b["terms"]):
         raise ValueError("BEST does not match the unit")
-    return {"cases": int(proto["done"]["cases"]), "candidates": proto["cands"],
+    cands = []
+    for c in proto["cands"]:
+        # try to lift a GF(2) record to integer coefficients (+-1, same support)
+        d = c["data"]
+        try:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("mm_lift", os.path.join(os.path.dirname(__file__), "lift.py"))
+            lift = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(lift)
+            signed = lift.lift(d["n"], d["m"], d["p"], d["terms"])
+        except Exception:
+            signed = None
+        d = dict(d, integer_lift=signed)
+        note = "; lifts to integer coefficients" if signed else "; GF(2) only (no +-1 lift found)"
+        cands.append(dict(c, data=d, summary=c.get("summary", "") + note))
+    return {"cases": int(proto["done"]["cases"]), "candidates": cands,
             "scheme": b, "bests": []}
 
 
